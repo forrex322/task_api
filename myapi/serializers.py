@@ -7,7 +7,8 @@ from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
     ValidationError,
-    EmailField
+    EmailField,
+    CharField
 )
 
 User = get_user_model()
@@ -78,3 +79,23 @@ class UserCreateSerializer(ModelSerializer):
         user_obj.set_password(password)
         user_obj.save()
         return validated_data
+
+
+class UserLoginSerializer(ModelSerializer):
+    token = CharField(allow_blank=True, read_only=True)
+    username = CharField()
+    email = EmailField(label='Email Address')
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'token']
+        extra_kwargs = {'password':
+                            {'write_only': True}
+                        }
+
+    def validate(self, data):
+        # email = data['email']
+        # user_qs = User.objects.filter(email=email)
+        # if user_qs.exists():
+        #     raise ValidationError("This user has already registered")
+        return data
