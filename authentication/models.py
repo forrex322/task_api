@@ -38,7 +38,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser, PermissionsMixin):
-
     username = models.CharField(db_index=True, max_length=256, unique=True)
     email = models.EmailField(db_index=True, unique=True)
     is_active = models.BooleanField(default=True)
@@ -64,12 +63,12 @@ class User(AbstractUser, PermissionsMixin):
     def get_short_name(self):
         return self.username
 
-    def _get_jwt_token(self):
+    def _generate_jwt_token(self):
         dt = datetime.now() + timedelta(days=1)
 
         token = jwt.encode({
             'id': self.pk,
-            'exp': int(dt.strftime('%s'))
-        }, settings.SEEK_KEY, algorithm='HS256')
+            'exp': int(dt.strftime('%S'))
+        }, settings.SECRET_KEY, algorithm='HS256')
 
-        return token.decode('utf-8')
+        return token

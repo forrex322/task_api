@@ -1,7 +1,6 @@
 from django.template.defaulttags import url
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-# from rest_framework_jwt.views import obtain_jwt_token
 from myapi import views
 
 urlpatterns = [
@@ -11,7 +10,6 @@ urlpatterns = [
     path('posts/<int:pk>/', views.PostDetail.as_view()),
     path('users/register/', views.UserCreateAPIView.as_view(), name='register'),
     path('users/login/', views.UserLoginAPIView.as_view(), name='login'),
-    # url(r'^api/auth/token/', obtain_jwt_token),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

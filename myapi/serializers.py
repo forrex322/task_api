@@ -79,6 +79,7 @@ class UserCreateSerializer(ModelSerializer):
         )
         user_obj.set_password(password)
         user_obj.save()
+        print(user_obj)
         return validated_data
 
 
