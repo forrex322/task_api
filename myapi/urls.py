@@ -1,7 +1,7 @@
-from django.template.defaulttags import url
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from myapi import views
+
 
 urlpatterns = [
     path('users/', views.UserList.as_view()),

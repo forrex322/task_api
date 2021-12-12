@@ -14,6 +14,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
 
     def retrieve(self, request, *args, **kwargs):
+
         serializer = self.serializer_class(request.user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -31,6 +32,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
 
 class RegistrationAPIView(APIView):
+
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
     renderer_classes = (UserJSONRenderer,)
@@ -43,6 +45,8 @@ class RegistrationAPIView(APIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # authentication_classes = ()
 
 
 class LoginAPIView(APIView):

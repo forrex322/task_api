@@ -4,17 +4,24 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import (
-    AbstractUser, BaseUserManager, PermissionsMixin
+    AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
+from rest_framework_simplejwt.tokens import RefreshToken, SlidingToken, UntypedToken, AccessToken
 
 from django.db import models
 
 
 class UserManager(BaseUserManager):
+    """
+    Django требует, чтобы кастомные пользователи определяли свой собственный
+    класс Manager. Унаследовавшись от BaseUserManager, мы получаем много того
+    же самого кода, который Django использовал для создания User (для демонстрации).
+    """
 
     def create_user(self, username, email, password=None):
+        """ Создает и возвращает пользователя с имэйлом, паролем и именем. """
         if username is None:
-            raise TypeError('Users must have a username')
+            raise TypeError('Users must have a username.')
 
         if email is None:
             raise TypeError('Users must have an email address.')
@@ -26,8 +33,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email, password):
+        """ Создает и возввращет пользователя с привилегиями суперадмина. """
         if password is None:
-            raise TypeError('Superusers must have a password')
+            raise TypeError('Superusers must have a password.')
 
         user = self.create_user(username, email, password)
         user.is_superuser = True
@@ -37,8 +45,8 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractUser, PermissionsMixin):
-    username = models.CharField(db_index=True, max_length=256, unique=True)
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(db_index=True, max_length=255, unique=True)
     email = models.EmailField(db_index=True, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -71,4 +79,9 @@ class User(AbstractUser, PermissionsMixin):
             'exp': int(dt.strftime('%S'))
         }, settings.SECRET_KEY, algorithm='HS256')
 
-        return token
+        user = User.objects.first()
+        access_token = AccessToken.for_user(user)
+        refresh_token = RefreshToken.for_user(user)
+
+        return str(access_token)
+        # return token
